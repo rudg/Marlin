@@ -296,9 +296,11 @@
        * on the Y position within the cell.
        */
       static float get_z_correction(const float &lx0, const float &ly0) {
-        const int8_t cx = get_cell_index_x(RAW_X_POSITION(lx0)),
-                     cy = get_cell_index_y(RAW_Y_POSITION(ly0));
-
+		  
+// BugFix: cx can be GRID_MAX_POINTS_X - 1 resulting in movement errors as NAN is not handeled 
+        const int8_t cx = constrain(get_cell_index_x(RAW_X_POSITION(lx0)),0,GRID_MAX_POINTS_X-2),
+                     cy = constrain(get_cell_index_y(RAW_Y_POSITION(ly0)),0,GRID_MAX_POINTS_Y-2);
+/* 
         if (!WITHIN(cx, 0, GRID_MAX_POINTS_X - 2) || !WITHIN(cy, 0, GRID_MAX_POINTS_Y - 2)) {
 
           SERIAL_ECHOPAIR("? in get_z_correction(lx0=", lx0);
@@ -312,7 +314,9 @@
           #endif
           return NAN; // this used to return state.z_offset
         }
-
+*/
+// EndOfBugFix
+		
         const float z1 = calc_z0(RAW_X_POSITION(lx0),
                                  mesh_index_to_xpos(cx), z_values[cx][cy],
                                  mesh_index_to_xpos(cx + 1), z_values[cx + 1][cy]);
