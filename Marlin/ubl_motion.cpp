@@ -124,11 +124,17 @@
                   destination[Z_AXIS],
                   destination[E_AXIS]
                 };
-
-    const int cell_start_xi = get_cell_index_x(RAW_X_POSITION(start[X_AXIS])),
+// BugFix: errors on the max side of the mesh
+/*     const int cell_start_xi = get_cell_index_x(RAW_X_POSITION(start[X_AXIS])),
               cell_start_yi = get_cell_index_y(RAW_Y_POSITION(start[Y_AXIS])),
               cell_dest_xi  = get_cell_index_x(RAW_X_POSITION(end[X_AXIS])),
               cell_dest_yi  = get_cell_index_y(RAW_Y_POSITION(end[Y_AXIS]));
+ */
+    const int cell_start_xi = constrain(get_cell_index_x(RAW_X_POSITION(start[X_AXIS])),0,GRID_MAX_POINTS_X-2),
+              cell_start_yi = constrain(get_cell_index_y(RAW_Y_POSITION(start[Y_AXIS])),0,GRID_MAX_POINTS_Y-2),
+              cell_dest_xi  = constrain(get_cell_index_x(RAW_X_POSITION(end[X_AXIS])),0,GRID_MAX_POINTS_X-2),
+              cell_dest_yi  = constrain(get_cell_index_y(RAW_Y_POSITION(end[Y_AXIS])),0,GRID_MAX_POINTS_Y-2);
+// EndBugFix
 
     if (g26_debug_flag) {
       SERIAL_ECHOPAIR(" ubl.line_to_destination(xe=", end[X_AXIS]);
@@ -652,8 +658,14 @@
         int8_t cell_xi = (seg_rx - (UBL_MESH_MIN_X)) * (1.0 / (MESH_X_DIST)),
                cell_yi = (seg_ry - (UBL_MESH_MIN_Y)) * (1.0 / (MESH_X_DIST));
 
-        cell_xi = constrain(cell_xi, 0, (GRID_MAX_POINTS_X) - 1);
+// BugFix: cell_xi out of range...
+/*
+		cell_xi = constrain(cell_xi, 0, (GRID_MAX_POINTS_X) - 1);
         cell_yi = constrain(cell_yi, 0, (GRID_MAX_POINTS_Y) - 1);
+*/
+        cell_xi = constrain(cell_xi, 0, (GRID_MAX_POINTS_X) - 2);
+        cell_yi = constrain(cell_yi, 0, (GRID_MAX_POINTS_Y) - 2);
+// EndBugFix
 
         const float x0 = mesh_index_to_xpos(cell_xi),   // 64 byte table lookup avoids mul+add
                     y0 = mesh_index_to_ypos(cell_yi);
