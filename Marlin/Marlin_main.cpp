@@ -7818,6 +7818,7 @@ inline void gcode_M111() {
                     str_debug_16[] PROGMEM = MSG_DEBUG_COMMUNICATION
                     #if ENABLED(DEBUG_LEVELING_FEATURE)
                       , str_debug_32[] PROGMEM = MSG_DEBUG_LEVELING
+					  , str_debug_64[] PROGMEM = MSG_DEBUG_MESH_ADJUST
                     #endif
                     ;
 
@@ -7825,6 +7826,7 @@ inline void gcode_M111() {
     str_debug_1, str_debug_2, str_debug_4, str_debug_8, str_debug_16
     #if ENABLED(DEBUG_LEVELING_FEATURE)
       , str_debug_32
+	  , str_debug_64
     #endif
   };
 
